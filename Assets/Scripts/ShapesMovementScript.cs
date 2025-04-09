@@ -7,12 +7,16 @@ public class ShapeController : MonoBehaviour
     private Rigidbody rb;
     private Vector3 moveDirection;
     private bool exitingCutout = false;
+    private AudioSource audioSource;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         originalSpeed = moveSpeed;
+
+        audioSource = GetComponent<AudioSource>();
+
     }
 
     void Update()
@@ -35,9 +39,17 @@ public class ShapeController : MonoBehaviour
     {
         if (other.gameObject.name == "Cutout")
         {
-            Debug.Log("Entering cutout — slowing down");
-            moveSpeed = originalSpeed * 0.3f;
+            Debug.Log("Exiting cutout — restoring speed and popping out");
+            moveSpeed = originalSpeed;
+
+            if (audioSource != null)
+            {
+                audioSource.Play(); // 🔊 Play the pop sound
+            }
+
+            StartCoroutine(PopOutEffect());
         }
+
     }
 
     private void OnTriggerExit(Collider other)
@@ -56,7 +68,7 @@ public class ShapeController : MonoBehaviour
         exitingCutout = true;
 
         // Displace forward slightly (based on current move direction)
-        Vector3 popOffset = moveDirection.normalized * 2.5f; // tweak amount here
+        Vector3 popOffset = moveDirection.normalized * 2f; // tweak amount here
         Vector3 targetPosition = rb.position + popOffset;
 
         float t = 0;
