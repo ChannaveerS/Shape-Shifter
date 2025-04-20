@@ -37,7 +37,19 @@ public class ShapeController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "Cutout")
+        if (other.gameObject.name == "LeftCutout")
+        {
+            Debug.Log("Exiting cutout — restoring speed and popping out");
+            moveSpeed = originalSpeed;
+
+            if (audioSource != null)
+            {
+                audioSource.Play(); // 🔊 Play the pop sound
+            }
+
+            StartCoroutine(PopOutEffect());
+        }
+        if (other.gameObject.name == "RightCutout")
         {
             Debug.Log("Exiting cutout — restoring speed and popping out");
             moveSpeed = originalSpeed;
