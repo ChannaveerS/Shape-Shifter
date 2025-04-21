@@ -8,16 +8,15 @@ public class ShapeController : MonoBehaviour
     private Vector3 moveDirection;
     private bool exitingCutout = false;
     private AudioSource audioSource;
-    public ParticleSystem smokeEffect; 
+
+    public GameObject smokeEffectPrefab; // 💨 Assign explosion prefab here
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         originalSpeed = moveSpeed;
-
         audioSource = GetComponent<AudioSource>();
-
     }
 
     void Update()
@@ -38,66 +37,41 @@ public class ShapeController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "LeftCutout")
+        if (other.CompareTag("Cutout"))
         {
-            Debug.Log("Exiting cutout — restoring speed and popping out");
-            moveSpeed = originalSpeed;
-
-            if (audioSource != null)
-            {
-                audioSource.Play(); // 🔊 Play the pop sound
-            }
-
-            StartCoroutine(PopOutEffect());
+            Debug.Log("Entered cutout — slowing down");
+            moveSpeed = originalSpeed * 0.4f;
         }
-        if (other.gameObject.name == "RightCutout")
-        {
-            Debug.Log("Exiting cutout — restoring speed and popping out");
-            moveSpeed = originalSpeed;
-
-            if (audioSource != null)
-            {
-                audioSource.Play(); // 🔊 Play the pop sound
-            }
-
-            StartCoroutine(PopOutEffect());
-        }
-
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Cutout"))
         {
-            Debug.Log("Exiting cutout — restoring speed and popping out");
+            Debug.Log("Exited cutout — restoring speed, playing pop & smoke");
             moveSpeed = originalSpeed;
 
             if (audioSource != null && !audioSource.isPlaying)
-            {
-                audioSource.Play(); // 🔊 Pop-out sound
-            }
+                audioSource.Play();
 
-            if (smokeEffect != null)
+            if (smokeEffectPrefab != null)
             {
-                smokeEffect.transform.position = transform.position;
-                smokeEffect.Play(); // 💨 Trigger smoke puff
+                GameObject smoke = Instantiate(smokeEffectPrefab, transform.position, Quaternion.identity);
+                Destroy(smoke, 2f);
             }
 
             StartCoroutine(PopOutEffect());
         }
     }
 
-
-    // 🌀 Add a small forward push when exiting
     private System.Collections.IEnumerator PopOutEffect()
     {
         exitingCutout = true;
 
-        // Displace forward slightly (based on current move direction)
-        Vector3 popOffset = moveDirection.normalized * 2f; // tweak amount here
+        Vector3 popOffset = moveDirection.normalized * 2f;
         Vector3 targetPosition = rb.position + popOffset;
 
-        float t = 0;
+        float t = 0f;
         float duration = 0.15f;
 
         while (t < duration)
@@ -107,7 +81,7 @@ public class ShapeController : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
-        rb.MovePosition(targetPosition); // Ensure exact position
+        rb.MovePosition(targetPosition);
         exitingCutout = false;
     }
 }

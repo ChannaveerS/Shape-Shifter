@@ -6,6 +6,7 @@ TagManager:
   tags:
   - playerTriangle
   - playerCube
+  - Cutout
   layers:
   - Default
   - TransparentFX
