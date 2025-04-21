@@ -8,6 +8,7 @@ public class ShapeController : MonoBehaviour
     private Vector3 moveDirection;
     private bool exitingCutout = false;
     private AudioSource audioSource;
+    public ParticleSystem smokeEffect; 
 
     void Start()
     {
@@ -66,13 +67,26 @@ public class ShapeController : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.name == "Cutout")
+        if (other.CompareTag("Cutout"))
         {
             Debug.Log("Exiting cutout — restoring speed and popping out");
             moveSpeed = originalSpeed;
+
+            if (audioSource != null && !audioSource.isPlaying)
+            {
+                audioSource.Play(); // 🔊 Pop-out sound
+            }
+
+            if (smokeEffect != null)
+            {
+                smokeEffect.transform.position = transform.position;
+                smokeEffect.Play(); // 💨 Trigger smoke puff
+            }
+
             StartCoroutine(PopOutEffect());
         }
     }
+
 
     // 🌀 Add a small forward push when exiting
     private System.Collections.IEnumerator PopOutEffect()
