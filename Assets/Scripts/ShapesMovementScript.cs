@@ -9,7 +9,8 @@ public class ShapeController : MonoBehaviour
     private bool exitingCutout = false;
     private AudioSource audioSource;
 
-    public GameObject smokeEffectPrefab; // 💨 Assign explosion prefab here
+    public GameObject smokeEffectPrefab;
+    public bool isActive = false; // 🟡 This is KEY for switching
 
     void Start()
     {
@@ -21,15 +22,18 @@ public class ShapeController : MonoBehaviour
 
     void Update()
     {
+        if (!isActive) return; // 🛑 Ignore input if not the active player
+
         float moveX = Input.GetAxis("Horizontal");
         float moveZ = Input.GetAxis("Vertical");
-
         moveDirection = new Vector3(moveX, 0, moveZ).normalized;
     }
 
     void FixedUpdate()
     {
-        if (moveDirection != Vector3.zero && !exitingCutout)
+        if (!isActive || exitingCutout) return;
+
+        if (moveDirection != Vector3.zero)
         {
             rb.MovePosition(rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime);
         }
@@ -37,18 +41,20 @@ public class ShapeController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!isActive) return;
+
         if (other.CompareTag("Cutout"))
         {
-            Debug.Log("Entered cutout — slowing down");
             moveSpeed = originalSpeed * 0.4f;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
+        if (!isActive) return;
+
         if (other.CompareTag("Cutout"))
         {
-            Debug.Log("Exited cutout — restoring speed, playing pop & smoke");
             moveSpeed = originalSpeed;
 
             if (audioSource != null && !audioSource.isPlaying)
@@ -67,7 +73,6 @@ public class ShapeController : MonoBehaviour
     private System.Collections.IEnumerator PopOutEffect()
     {
         exitingCutout = true;
-
         Vector3 popOffset = moveDirection.normalized * 2f;
         Vector3 targetPosition = rb.position + popOffset;
 

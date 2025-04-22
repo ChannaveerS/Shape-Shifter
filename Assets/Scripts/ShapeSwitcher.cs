@@ -2,24 +2,24 @@ using UnityEngine;
 
 public class ShapeSwitcher : MonoBehaviour
 {
-    public GameObject playerTriangle;
-    public GameObject playerCube;
+    public GameObject triangle1;
+    public GameObject triangle2;
 
     private GameObject activePlayer;
 
     private void Start()
     {
-        SetActivePlayer(playerTriangle);
+        SetActivePlayer(triangle1);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            if (activePlayer == playerTriangle)
-                SetActivePlayer(playerCube);
+            if (activePlayer == triangle1)
+                SetActivePlayer(triangle2);
             else
-                SetActivePlayer(playerTriangle);
+                SetActivePlayer(triangle1);
         }
     }
 
@@ -27,26 +27,26 @@ public class ShapeSwitcher : MonoBehaviour
     {
         activePlayer = newPlayer;
 
-        // Enable or disable movement
-        playerTriangle.GetComponent<ShapeController>().enabled = (newPlayer == playerTriangle);
-        playerCube.GetComponent<ShapeController>().enabled = (newPlayer == playerCube);
+        // Enable movement only for the active triangle
+        triangle1.GetComponent<ShapeController>().enabled = (newPlayer == triangle1);
+        triangle2.GetComponent<ShapeController>().enabled = (newPlayer == triangle2);
 
-        // Set emission glow - white
-        var triangleMat = playerTriangle.GetComponent<Renderer>().material;
-        var cubeMat = playerCube.GetComponent<Renderer>().material;
+        // Update glow emission color
+        var mat1 = triangle1.GetComponent<Renderer>().material;
+        var mat2 = triangle2.GetComponent<Renderer>().material;
 
-        triangleMat.EnableKeyword("_EMISSION");
-        cubeMat.EnableKeyword("_EMISSION");
+        mat1.EnableKeyword("_EMISSION");
+        mat2.EnableKeyword("_EMISSION");
 
-        if (newPlayer == playerTriangle)
+        if (newPlayer == triangle1)
         {
-            triangleMat.SetColor("_EmissionColor", Color.white);
-            cubeMat.SetColor("_EmissionColor", Color.black);
+            mat1.SetColor("_EmissionColor", Color.white);
+            mat2.SetColor("_EmissionColor", Color.black);
         }
         else
         {
-            triangleMat.SetColor("_EmissionColor", Color.black);
-            cubeMat.SetColor("_EmissionColor", Color.white);
+            mat1.SetColor("_EmissionColor", Color.black);
+            mat2.SetColor("_EmissionColor", Color.white);
         }
     }
 }
