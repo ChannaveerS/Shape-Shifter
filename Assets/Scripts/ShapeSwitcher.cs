@@ -1,52 +1,51 @@
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class ShapeSwitcher : MonoBehaviour
 {
-    public GameObject triangle1;
-    public GameObject triangle2;
-
-    private GameObject activePlayer;
+    public List<GameObject> playerShapes; // Assign all shapes here in the Inspector
+    private int currentIndex = 0;
 
     private void Start()
     {
-        SetActivePlayer(triangle1);
+        if (playerShapes.Count > 0)
+        {
+            SetActivePlayer(currentIndex);
+        }
+        else
+        {
+            Debug.LogWarning("No player shapes assigned in ShapeSwitcher!");
+        }
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && playerShapes.Count > 1)
         {
-            if (activePlayer == triangle1)
-                SetActivePlayer(triangle2);
-            else
-                SetActivePlayer(triangle1);
+            currentIndex = (currentIndex + 1) % playerShapes.Count;
+            SetActivePlayer(currentIndex);
         }
     }
 
-    private void SetActivePlayer(GameObject newPlayer)
+    private void SetActivePlayer(int index)
     {
-        activePlayer = newPlayer;
-
-        // Enable movement only for the active triangle
-        triangle1.GetComponent<ShapeController>().enabled = (newPlayer == triangle1);
-        triangle2.GetComponent<ShapeController>().enabled = (newPlayer == triangle2);
-
-        // Update glow emission color
-        var mat1 = triangle1.GetComponent<Renderer>().material;
-        var mat2 = triangle2.GetComponent<Renderer>().material;
-
-        mat1.EnableKeyword("_EMISSION");
-        mat2.EnableKeyword("_EMISSION");
-
-        if (newPlayer == triangle1)
+        for (int i = 0; i < playerShapes.Count; i++)
         {
-            mat1.SetColor("_EmissionColor", Color.white);
-            mat2.SetColor("_EmissionColor", Color.black);
-        }
-        else
-        {
-            mat1.SetColor("_EmissionColor", Color.black);
-            mat2.SetColor("_EmissionColor", Color.white);
+            var shape = playerShapes[i];
+            bool isActive = (i == index);
+
+            // Enable/Disable controller script
+            ShapeController controller = shape.GetComponent<ShapeController>();
+            if (controller != null)
+                controller.enabled = isActive;
+
+            // Optional: Set glow
+            var mat = shape.GetComponent<Renderer>().material;
+            if (mat != null)
+            {
+                mat.EnableKeyword("_EMISSION");
+                mat.SetColor("_EmissionColor", isActive ? Color.white : Color.black);
+            }
         }
     }
 }

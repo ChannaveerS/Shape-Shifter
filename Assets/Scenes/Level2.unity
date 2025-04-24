@@ -753,8 +753,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74db89858b80e974cab222db7a99106d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  triangle1: {fileID: 221848504}
-  triangle2: {fileID: 2049194971}
+  playerShapes:
+  - {fileID: 221848504}
+  - {fileID: 2049194971}
 --- !u!1 &1003334744
 GameObject:
   m_ObjectHideFlags: 0

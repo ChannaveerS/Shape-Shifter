@@ -319,6 +319,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: c64a6d44a639c6343a296024b8a710bd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1694502882}
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: c64a6d44a639c6343a296024b8a710bd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 988579087}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1569907332236680147, guid: c64a6d44a639c6343a296024b8a710bd, type: 3}
       insertIndex: -1
@@ -352,6 +355,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   smokeEffectPrefab: {fileID: 139306134}
+  isActive: 1
 --- !u!54 &221848509
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -743,6 +747,52 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!1 &988579086
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 988579087}
+  - component: {fileID: 988579088}
+  m_Layer: 0
+  m_Name: switcher
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &988579087
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 988579086}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.6295117, y: -4.866029, z: 2.1649837}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2138794498}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &988579088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 988579086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74db89858b80e974cab222db7a99106d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerShapes:
+  - {fileID: 221848504}
 --- !u!1 &1003334744
 GameObject:
   m_ObjectHideFlags: 0
