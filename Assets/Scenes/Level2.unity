@@ -266,7 +266,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7e40a3ed9024e74db4b4c68ac8a4ae3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveSpeed: 5
   smokeEffectPrefab: {fileID: 1581466985}
   isActive: 1
 --- !u!54 &221848509
@@ -789,7 +789,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe405c419ea2a8846bea3d83b085bf93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disableDelay: 0.5
+  levelCompleteDelay: 1
+  playerObjects:
+  - {fileID: 221848504}
+  - {fileID: 2049194971}
 --- !u!65 &1003334746
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2262,7 +2265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7e40a3ed9024e74db4b4c68ac8a4ae3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveSpeed: 5
   smokeEffectPrefab: {fileID: 1581466985}
   isActive: 1
 --- !u!23 &2049194976

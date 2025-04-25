@@ -1,55 +1,106 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class finishlineScript : MonoBehaviour
 {
     private AudioSource audioSource;
 
-    [Tooltip("Delay before freezing movement after crossing the finish line")]
-    public float disableDelay = 0.5f;
+    [Tooltip("Delay before transitioning after all players finish")]
+    public float levelCompleteDelay = 1f;
+
+    [Tooltip("List of all player objects that must finish")]
+    public List<GameObject> playerObjects;
+
+    private HashSet<GameObject> playersFinished = new HashSet<GameObject>();
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+
+        if (playerObjects == null || playerObjects.Count == 0)
+        {
+            Debug.LogWarning("⚠️ No player objects assigned to finishlineScript.");
+        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("playerTriangle") || other.CompareTag("playerCube"))
-        {
-            Debug.Log("🎉 Finish Line Crossed by: " + other.gameObject.name);
+        if (!playerObjects.Contains(other.gameObject)) return;
 
-            // Play chime sound
+        if (!playersFinished.Contains(other.gameObject))
+        {
+            playersFinished.Add(other.gameObject);
+            Debug.Log("✅ Player finished: " + other.gameObject.name);
+
             if (audioSource != null && !audioSource.isPlaying)
-            {
                 audioSource.Play();
+
+            // Apply pulse glow effect
+            Renderer r = other.GetComponent<Renderer>();
+            if (r != null)
+            {
+                StartCoroutine(PulseGlow(r, Color.green));
             }
 
-            // Start coroutine to disable movement after short delay
-            StartCoroutine(DisableMovementAfterDelay(other.gameObject, disableDelay));
+            // Check if all players are done
+            if (playersFinished.Count == playerObjects.Count)
+            {
+                Debug.Log("🎉 All players finished! Proceeding to next level...");
+                StartCoroutine(FreezeAndLoadNextLevel());
+            }
         }
     }
 
-    private IEnumerator DisableMovementAfterDelay(GameObject player, float delay)
+    private IEnumerator FreezeAndLoadNextLevel()
     {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(levelCompleteDelay);
 
-        // Disable shape movement script
-        var movementScript = player.GetComponent<ShapeController>();
-        if (movementScript != null)
+        // Freeze all players
+        foreach (GameObject player in playerObjects)
         {
-            movementScript.enabled = false;
+            var movement = player.GetComponent<ShapeController>();
+            if (movement != null)
+                movement.enabled = false;
+
+            var rb = player.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.constraints = RigidbodyConstraints.FreezeAll;
+            }
         }
 
-        // Freeze Rigidbody motion
-        var rb = player.GetComponent<Rigidbody>();
-        if (rb != null)
+        yield return new WaitForSeconds(0.5f); // Small buffer
+
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextIndex = currentIndex + 1;
+
+        if (nextIndex < SceneManager.sceneCountInBuildSettings)
         {
-            rb.linearVelocity = Vector3.zero;
-            rb.constraints = RigidbodyConstraints.FreezeAll;
+            SceneManager.LoadScene(nextIndex);
+        }
+        else
+        {
+            Debug.Log("🏁 Game finished! No more levels.");
+        }
+    }
+
+    private IEnumerator PulseGlow(Renderer renderer, Color pulseColor, float duration = 1.5f)
+    {
+        Material mat = renderer.material; // Instanced material
+        mat.EnableKeyword("_EMISSION");
+
+        float t = 0f;
+        while (t < duration)
+        {
+            float intensity = Mathf.PingPong(Time.time * 3f, 1f);
+            mat.SetColor("_EmissionColor", pulseColor * intensity);
+            t += Time.deltaTime;
+            yield return null;
         }
 
-        // Optional: Add animation trigger or particle effect
-        // player.GetComponent<Animator>()?.SetTrigger("Celebrate");
+        mat.SetColor("_EmissionColor", pulseColor * 1.2f); // Hold final glow
     }
 }

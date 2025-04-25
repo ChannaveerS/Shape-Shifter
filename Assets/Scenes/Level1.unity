@@ -283,7 +283,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9160495212925720221, guid: c64a6d44a639c6343a296024b8a710bd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.00000005029142
+      value: -2.24
       objectReference: {fileID: 0}
     - target: {fileID: 9160495212925720221, guid: c64a6d44a639c6343a296024b8a710bd, type: 3}
       propertyPath: m_LocalPosition.y
@@ -291,7 +291,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9160495212925720221, guid: c64a6d44a639c6343a296024b8a710bd, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.47
+      value: -7.7
       objectReference: {fileID: 0}
     - target: {fileID: 9160495212925720221, guid: c64a6d44a639c6343a296024b8a710bd, type: 3}
       propertyPath: m_LocalRotation.w
@@ -353,7 +353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7e40a3ed9024e74db4b4c68ac8a4ae3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveSpeed: 5
   smokeEffectPrefab: {fileID: 139306134}
   isActive: 1
 --- !u!54 &221848509
@@ -826,7 +826,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe405c419ea2a8846bea3d83b085bf93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disableDelay: 0.5
+  levelCompleteDelay: 1
+  playerObjects:
+  - {fileID: 221848504}
 --- !u!65 &1003334746
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1807,7 +1809,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.7, y: 0.63, z: -0.22}
+  m_Size: {x: 1.1, y: 1, z: -0.33}
   m_Center: {x: 0, y: 0, z: -0.96}
 --- !u!1 &1716728217
 GameObject:
