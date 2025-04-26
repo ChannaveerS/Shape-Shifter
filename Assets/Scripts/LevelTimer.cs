@@ -88,14 +88,26 @@ public class LevelTimer : MonoBehaviour
 
         if (messageText != null)
         {
-            int nextLevel = SceneManager.GetActiveScene().buildIndex + 1;
-            messageText.text = $"Cool! On to Level {nextLevel}!";
-            messageText.color = new Color32(0, 255, 200, 255); // Mint Cyan
+            int currentIndex = SceneManager.GetActiveScene().buildIndex;
+            int nextIndex = currentIndex + 1;
+
+            if (nextIndex < SceneManager.sceneCountInBuildSettings)
+            {
+                messageText.text = $"Cool! On to Level {nextIndex}!";
+                messageText.color = new Color32(0, 255, 200, 255); // Mint Cyan
+            }
+            else
+            {
+                messageText.text = "Game Completed!";
+                messageText.color = new Color32(255, 215, 0, 255); // Gold Yellow
+            }
+
             StartCoroutine(SlideText());
         }
 
-        StartCoroutine(LoadNextLevelAfterDelay(2f));
+        StartCoroutine(LoadNextLevelAfterDelay(1f));
     }
+
 
     private void FreezeAllPlayers()
     {
@@ -127,7 +139,9 @@ public class LevelTimer : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        int nextIndex = SceneManager.GetActiveScene().buildIndex ;
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextIndex = currentIndex + 1;
+
         if (nextIndex < SceneManager.sceneCountInBuildSettings)
         {
             SceneManager.LoadScene(nextIndex);
@@ -135,8 +149,15 @@ public class LevelTimer : MonoBehaviour
         else
         {
             Debug.Log("🎉 No more levels. Game complete!");
+
+            // Wait extra before returning to Main Menu
+            yield return new WaitForSeconds(2f); // <-- ADD extra 2 seconds delay
+
+            SceneManager.LoadScene(0); // Load Main Menu (Scene 0)
         }
     }
+
+
 
     private IEnumerator SlideText()
     {
