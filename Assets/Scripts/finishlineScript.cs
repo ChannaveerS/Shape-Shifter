@@ -15,7 +15,7 @@ public class finishlineScript : MonoBehaviour
 
     private HashSet<GameObject> playersFinished = new HashSet<GameObject>();
 
-    private void Start()
+    void Start()
     {
         audioSource = GetComponent<AudioSource>();
 
@@ -23,6 +23,7 @@ public class finishlineScript : MonoBehaviour
         {
             Debug.LogWarning("⚠️ No player objects assigned to finishlineScript.");
         }
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -37,29 +38,18 @@ public class finishlineScript : MonoBehaviour
             if (audioSource != null && !audioSource.isPlaying)
                 audioSource.Play();
 
-            // Glow
-            if (other.TryGetComponent(out Renderer r))
+            // Apply pulse glow effect
+            Renderer r = other.GetComponent<Renderer>();
+            if (r != null)
             {
-                StartCoroutine(PulseGlow(r, Color.cyan)); // 🎨 Customize color
+                StartCoroutine(PulseGlow(r, Color.green));
             }
 
+            // Check if all players are done
             if (playersFinished.Count == playerObjects.Count)
             {
                 Debug.Log("🎉 All players finished! Proceeding to next level...");
-
-                // Stop timer
-                if (FindObjectOfType<LevelTimer>() is LevelTimer timer)
-                {
-                    timer.LevelCompleted();
-                }
-
-                // Message
-                var ui = FindObjectOfType<UIManager>();
-                if (ui != null)
-                {
-                    int nextLevel = SceneManager.GetActiveScene().buildIndex + 1;
-                    ui.ShowLevelMessage($"Cool! On to Level {nextLevel}");
-                }
+                FindObjectOfType<LevelTimer>().LevelCompleted();
 
                 StartCoroutine(FreezeAndLoadNextLevel());
             }
@@ -70,19 +60,22 @@ public class finishlineScript : MonoBehaviour
     {
         yield return new WaitForSeconds(levelCompleteDelay);
 
+        // Freeze all players
         foreach (GameObject player in playerObjects)
         {
-            if (player.TryGetComponent(out ShapeController movement))
+            var movement = player.GetComponent<ShapeController>();
+            if (movement != null)
                 movement.enabled = false;
 
-            if (player.TryGetComponent(out Rigidbody rb))
+            var rb = player.GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                rb.velocity = Vector3.zero;
+                rb.linearVelocity = Vector3.zero;
                 rb.constraints = RigidbodyConstraints.FreezeAll;
             }
         }
 
-        yield return new WaitForSeconds(0.5f); // Optional pause
+        yield return new WaitForSeconds(0.5f); // Small buffer
 
         int currentIndex = SceneManager.GetActiveScene().buildIndex;
         int nextIndex = currentIndex + 1;
@@ -99,7 +92,7 @@ public class finishlineScript : MonoBehaviour
 
     private IEnumerator PulseGlow(Renderer renderer, Color pulseColor, float duration = 1.5f)
     {
-        Material mat = renderer.material; // creates unique instance
+        Material mat = renderer.material; // Instanced material
         mat.EnableKeyword("_EMISSION");
 
         float t = 0f;
@@ -111,6 +104,6 @@ public class finishlineScript : MonoBehaviour
             yield return null;
         }
 
-        mat.SetColor("_EmissionColor", pulseColor * 1.2f);
+        mat.SetColor("_EmissionColor", pulseColor * 1.2f); // Hold final glow
     }
 }
